@@ -18,15 +18,15 @@ class VisionSettings(BaseSettings):
     # PRIMARY VISION MODEL SELECTION
     # ========================================================================
     VISION_MODEL_PROVIDER: Literal[
-        "llava",  # Ollama: llava:13b, llama3.2-vision, llava:latest
-        "gemma3",  # Ollama: gemma3:4b, gemma3:12b
-        "llava_med",  # HuggingFace: Medical specialist
-        "biomedclip",  # HuggingFace: Pathology classifier
         "florence",  # HuggingFace: General vision (not recommended)
-        "gpt4v",  # OpenAI: Best accuracy, expensive
-        "claude",  # Anthropic: Excellent reasoning
+        "biomedclip",  # HuggingFace: Pathology classifier
+        "llava",  # Ollama: llava:13b, llama3.2-vision, llava:latest
+        "llava_med",  # HuggingFace: Medical specialist
+        "gemma3",  # Ollama: gemma3:4b, gemma3:12b
         "groq",  # Groq: Ultra-fast, cheap
         "gemini",  # Google: Multimodal, large context
+        "claude",  # Anthropic: Excellent reasoning
+        "gpt4v",  # OpenAI: Best accuracy, expensive
     ] = "gpt4v"
 
     # ========================================================================
@@ -35,7 +35,9 @@ class VisionSettings(BaseSettings):
 
     # ── LLaVA Settings ──
     # Available: llava:13b (recommended), llama3.2-vision (Meta latest), llava:latest
-    LLAVA_MODEL: str = "llava:13b"
+    # LLAVA_MODEL: str = "llava:13b"
+    LLAVA_MODEL: str = "llava:latest"
+    # LLAVA_MODEL: str = "llama3.2-vision"
 
     # ── Gemma 3 Settings (NEW - Google's multimodal) ──
     # Available: gemma3:4b (recommended for 16GB RAM), gemma3:12b (better accuracy)
@@ -77,7 +79,7 @@ class VisionSettings(BaseSettings):
 
     # ── Gemini Settings (NEW - Google's multimodal) ──
     # Free tier: 1,500 requests/day
-    # Models: gemini-2.5-flash (stable), gemini-2.0-flash-exp, gemini-1.5-pro
+    # Models: gemini-2.5-flash (stable), gemini-2.5-pro, gemini-1.5-pro (best for reasoning), gemini-1.5-flash (fast)
     GEMINI_API_KEY: str = Field(default="", env="GEMINI_API_KEY")
     GEMINI_VISION_MODEL: str = "gemini-2.5-flash"  # Fast, cheap, good
 

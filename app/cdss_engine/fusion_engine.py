@@ -427,6 +427,7 @@ class CDSSFusionEngine:
         knowledge: List[RetrievedKnowledge],
         available_pages: List[int],
         tooth_numbers: Optional[List[str]] = None,
+        image_analysis_error: Optional[str] = None,
     ) -> ClinicalRecommendation:
         """Generate recommendation with tooth number enforcement."""
         logger.info(f"\n{'='*70}")
@@ -487,6 +488,8 @@ class CDSSFusionEngine:
             image_ctx += f"\nKEY PATHOLOGY:\n{image_obs.pathology_summary}"
             image_ctx += f"\n\nImage Quality: {image_obs.image_quality_score:.2f}/1.0"
             image_ctx += f"\nDiagnostic Confidence: {image_obs.diagnostic_confidence:.2f}/1.0"
+        elif image_analysis_error:
+            image_ctx = f"⚠️ Image provided but ANALYSIS FAILED: {image_analysis_error}"
         else:
             image_ctx = "⚠️ No radiograph provided."
 
@@ -593,29 +596,22 @@ class CDSSFusionEngine:
         # CRITICAL: Initialize both variables
         image_obs = None
         no_image_message = None
+        analysis_error = None
 
         # Try image analysis if image provided
         if image_bytes:
-            try:
-                image_obs = self.analyze_radiograph(
-                    image_bytes,
-                    chief_complaint,
-                    f"{patient_history.age}y {patient_history.gender}",
-                    tooth_numbers,
-                    clinical_notes,
-                )
-            except Exception as e:
-                logger.error(f"❌ Image analysis failed: {e}")
-                # image_obs stays None, will create NoImageProvided below
+            image_obs = self.analyze_radiograph(
+                image_bytes,
+                chief_complaint,
+                f"{patient_history.age}y {patient_history.gender}",
+                tooth_numbers,
+                clinical_notes,
+            )
 
         # CRITICAL FIX: Create NoImageProvided if no successful image analysis
         if image_obs is None:
             no_image_message = NoImageProvided(
-                message=(
-                    "No radiograph image was provided for this consultation"
-                    if not image_bytes
-                    else "Image analysis failed"
-                ),
+                message="No radiograph image was provided for this consultation",
                 image_required=False,
             )
             logger.info(f"  \n⚠️  No image analysis available")
@@ -630,6 +626,7 @@ class CDSSFusionEngine:
             knowledge,
             available_pages,
             tooth_numbers,
+            image_analysis_error=analysis_error
         )
 
         # ============================================================

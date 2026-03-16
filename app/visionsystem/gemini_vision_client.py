@@ -88,6 +88,9 @@ class GeminiVisionClient:
             response = self._client.models.generate_content(
                 model=self._model_id,
                 contents=[prompt, {"inline_data": {"mime_type": "image/png", "data": img_base64}}],
+                config={
+                    "response_mime_type": "application/json",
+                }
             )
 
             result = response.text
