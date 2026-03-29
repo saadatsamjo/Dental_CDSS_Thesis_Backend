@@ -16,6 +16,7 @@ wheels/
 repomix-output.xml
 repomix-output.txt
 repomix-output.md
+some_results.txt
 
 # --- Python & FastAPI ---
 __pycache__/
